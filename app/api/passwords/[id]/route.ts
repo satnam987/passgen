@@ -2,10 +2,8 @@ import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { verifyToken } from '../../../lib/auth';
 
-// PrismaClient met singleton patroon
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
-export const prisma = globalForPrisma.prisma || new PrismaClient();
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+// Eén PrismaClient instantie voor de huidige request
+const prisma = new PrismaClient();
 
 export async function DELETE(
   request: Request,

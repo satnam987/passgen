@@ -3,16 +3,16 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-// PrismaClient met singleton patroon
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
-export const prisma = globalForPrisma.prisma || new PrismaClient();
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+// Eén PrismaClient instantie voor de huidige request
+const prisma = new PrismaClient();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
+    
+    console.log(`Registratie poging voor email: ${email}`);
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
@@ -20,6 +20,7 @@ export async function POST(request: Request) {
     });
 
     if (existingUser) {
+      console.log(`Gebruiker met email ${email} bestaat al`);
       return NextResponse.json(
         { error: 'Gebruiker bestaat al' },
         { status: 400 }
@@ -44,6 +45,7 @@ export async function POST(request: Request) {
       { expiresIn: '24h' }
     );
 
+    console.log(`Gebruiker ${email} succesvol geregistreerd`);
     return NextResponse.json(
       { 
         message: 'Gebruiker succesvol aangemaakt',
