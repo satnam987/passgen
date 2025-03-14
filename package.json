@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node prebuild.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "vercel-build": "next build",
-    "postinstall": "node vercel-build-prepare.js",
+    "vercel-build": "node prebuild.js && next build",
+    "postinstall": "node prebuild.js",
     "prisma-generate": "npx prisma generate"
   },
   "dependencies": {
