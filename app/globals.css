@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Zorg ervoor dat alle tekst in invoervelden en FAQ-vragen zwart is */
+input, textarea, select, .faq-question, .accordion-title {
+  color: #000000 !important;
+}
+
 @layer utilities {
   .animation-delay-200 {
     animation-delay: 200ms;
@@ -14,6 +19,27 @@
   }
   .animation-delay-4000 {
     animation-delay: 4s;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0.9;
   }
 }
 
@@ -44,11 +70,38 @@
 }
 
 .animate-blob {
-  animation: blob 7s infinite;
+  animation: blob 10s infinite alternate;
 }
 
 .animation-delay-200 {
   animation-delay: 200ms;
+}
+
+.animation-delay-3000 {
+  animation-delay: 3s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+.animation-delay-5000 {
+  animation-delay: 5s;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 :root {
@@ -111,6 +164,127 @@ input:focus {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
-.animate-fade-in {
-  animation: fade-in 0.5s ease-out forwards;
-} 
+/* Glassmorphism effects */
+.glassmorphism {
+  @apply backdrop-blur-lg bg-white/50 border border-white/30 shadow-lg shadow-blue-900/5;
+}
+
+.glassmorphism-card {
+  @apply backdrop-blur-xl bg-white/80 border border-white/40 shadow-xl;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+.glassmorphism-card:hover {
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Grid pattern for subtle backgrounds */
+.bg-grid-pattern {
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Parallax effect */
+.parallax {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+/* Button effects */
+.button-glow:hover {
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
+}
+
+.scale-on-hover:hover {
+  transform: scale(1.03);
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Bounce animation */
+@keyframes bounce-light {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-bounce-light {
+  animation: bounce-light 3s infinite ease-in-out;
+}
+
+/* Soft gradient transitions */
+.gradient-shift {
+  background-size: 400% 400%;
+  animation: gradient 8s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Loading spinner animation */
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spinner {
+  animation: spinner 0.8s linear infinite;
+}
+
+/* For dark mode in the future */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+/* Disable all animations and hover effects */
+.no-animations * {
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  transform-style: flat !important;
+  transform-origin: center !important;
+  perspective: none !important;
+  transition-property: none !important;
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+}
+
+.no-animations *:hover {
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  transform-style: flat !important;
+  transform-origin: center !important;
+  perspective: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  opacity: inherit !important;
+  scale: 1 !important;
+  box-shadow: inherit !important;
+}
+
+/* Glassmorphism effects */ 
