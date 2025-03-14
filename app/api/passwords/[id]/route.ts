@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { verifyToken } from '../../../lib/auth';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../../../prisma/client';
 
 export async function DELETE(
   request: Request,

@@ -1,10 +1,8 @@
 'use server';
 
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { verifyToken } from '../../lib/auth';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../../prisma/client';
 
 export async function GET(request: Request) {
   console.log('GET /api/passwords - Ophalen van wachtwoorden');

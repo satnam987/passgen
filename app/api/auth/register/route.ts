@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { prisma } from '../../../../prisma/client';
 
-const prisma = new PrismaClient();
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export async function POST(request: Request) {
   try {
@@ -31,11 +32,23 @@ export async function POST(request: Request) {
       },
     });
 
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
     return NextResponse.json(
-      { message: 'Gebruiker succesvol aangemaakt' },
+      { 
+        message: 'Gebruiker succesvol aangemaakt',
+        token,
+        userId: user.id
+      },
       { status: 201 }
     );
   } catch (error) {
+    console.error('Registration error:', error);
     return NextResponse.json(
       { error: 'Er is een fout opgetreden' },
       { status: 500 }

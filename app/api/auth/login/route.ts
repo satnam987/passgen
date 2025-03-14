@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { prisma } from '../../../../prisma/client';
 
-const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export async function POST(request: Request) {
@@ -39,8 +38,9 @@ export async function POST(request: Request) {
       { expiresIn: '24h' }
     );
 
-    return NextResponse.json({ token });
+    return NextResponse.json({ token, userId: user.id });
   } catch (error) {
+    console.error('Login error:', error);
     return NextResponse.json(
       { error: 'Er is een fout opgetreden' },
       { status: 500 }
