@@ -41,7 +41,7 @@ export default function Home() {
                 </svg>
               </div>
               <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent group-hover:from-purple-600 group-hover:to-blue-600 transition-all duration-300">
-                PassGen
+                Unbreakapass
               </span>
             </Link>
 
@@ -181,10 +181,10 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                 </svg>
               </div>
-              <span className="ml-2 text-lg font-medium text-gray-700">PassGen</span>
+              <span className="ml-2 text-lg font-medium text-gray-700">Unbreakapass</span>
             </div>
             <p className="text-gray-500 text-sm">
-              © {new Date().getFullYear()} PassGen. All rights reserved.
+              © {new Date().getFullYear()} Unbreakapass. All rights reserved.
             </p>
             <p className="text-gray-400 text-xs mt-2">
               Your passwords are encrypted and never shared with third parties.

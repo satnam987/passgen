@@ -6,7 +6,7 @@ import { AuthProvider } from './context/AuthContext';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Password Manager',
+  title: 'Unbreakapass',
   description: 'Generate and securely store your passwords',
 };
 
