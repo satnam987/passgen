@@ -60,16 +60,19 @@ export default function SavedPasswords() {
     setRefreshCount(prev => prev + 1);
   };
 
-  // Abonneren op password events om automatisch te verversen wanneer een nieuw wachtwoord is opgeslagen
+  // Callback voor password events
+  const handlePasswordEvent = () => {
+    console.log('Nieuw wachtwoord opgeslagen, gegevens worden ververst...');
+    handleRefresh();
+  };
+
+  // Abonneren op password events
   useEffect(() => {
     // Alleen abonneren als de gebruiker is ingelogd
     if (!user) return;
     
     // Abonneren op password events
-    const unsubscribe = passwordEvents.subscribe(() => {
-      console.log('Nieuw wachtwoord opgeslagen, gegevens worden ververst...');
-      handleRefresh();
-    });
+    passwordEvents.on('passwordGenerated', handlePasswordEvent);
     
     // Polling mechanisme om de 10 seconden verversen
     const interval = setInterval(() => {
@@ -78,7 +81,7 @@ export default function SavedPasswords() {
     
     // Afmelden bij het opruimen van de component
     return () => {
-      unsubscribe();
+      passwordEvents.removeListener('passwordGenerated', handlePasswordEvent);
       clearInterval(interval);
     };
   }, [user]);
