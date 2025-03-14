@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
 import { verifyToken } from '../../../lib/auth';
-import { prisma } from '../../../../prisma/client';
+
+// PrismaClient met singleton patroon
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
+export const prisma = globalForPrisma.prisma || new PrismaClient();
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
 export async function DELETE(
   request: Request,
