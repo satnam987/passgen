@@ -3,13 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { passwordEvents } from './PasswordGenerator';
+import { getPasswordsByUserId, deletePassword, Password as FirestorePassword } from '../services/passwordService';
 
 interface Password {
-  id: string;
+  id?: string;
   website: string;
   username: string;
   password: string;
-  createdAt: string;
+  createdAt?: any;
+  updatedAt?: any;
 }
 
 export default function SavedPasswords() {
@@ -27,19 +29,10 @@ export default function SavedPasswords() {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('/api/passwords', {
-        headers: {
-          'Authorization': `Bearer ${user.token}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch passwords');
-      }
-      
-      const data = await response.json();
-      console.log("Wachtwoorden opgehaald:", data);
-      setPasswords(data);
+      // Gebruik de passwordService in plaats van de API route
+      const passwordData = await getPasswordsByUserId(user.id);
+      console.log("Wachtwoorden opgehaald:", passwordData);
+      setPasswords(passwordData);
     } catch (err) {
       setError('Er is een fout opgetreden bij het ophalen van wachtwoorden');
       console.error('Error fetching passwords:', err);
@@ -93,17 +86,8 @@ export default function SavedPasswords() {
       // Optimistische update - verwijder wachtwoord meteen uit de UI
       setPasswords(prevPasswords => prevPasswords.filter(pwd => pwd.id !== id));
       
-      const response = await fetch(`/api/passwords/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${user.token}`
-        }
-      });
-      
-      if (!response.ok) {
-        // Als het verwijderen mislukt, haal dan de wachtwoorden opnieuw op om de juiste staat te herstellen
-        throw new Error('Failed to delete password');
-      }
+      // Gebruik de passwordService in plaats van de API route
+      await deletePassword(id);
       
       // Verwijdering succesvol
     } catch (err) {
@@ -199,59 +183,60 @@ export default function SavedPasswords() {
         </div>
       ) : (
         <div className="space-y-4">
-          {passwords.map((pwd) => (
-            <div
-              key={pwd.id}
-              className="bg-white rounded-xl shadow-md p-5 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-gray-100"
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 flex items-center">
-                    {pwd.website}
-                    <span className="ml-2 px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
-                      Safe
-                    </span>
-                  </h3>
-                  <p className="text-sm text-gray-500 flex items-center mt-1">
-                    <svg className="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    {new Date(pwd.createdAt).toLocaleDateString('en-US')}
-                  </p>
+          {passwords
+            .filter(pwd => pwd.id !== undefined) // Filter wachtwoorden zonder id
+            .map((pwd) => (
+              <div
+                key={pwd.id}
+                className="bg-white rounded-xl shadow-md p-5 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-gray-100"
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800 flex items-center">
+                      {pwd.website}
+                      <span className="ml-2 px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                        Safe
+                      </span>
+                    </h3>
+                    <p className="text-sm text-gray-500 flex items-center mt-1">
+                      <svg className="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      {pwd.createdAt ? new Date(pwd.createdAt.seconds * 1000).toLocaleDateString('en-US') : 'Unknown date'}
+                    </p>
+                  </div>
+                  
+                  <div className="flex space-x-1">
+                    <button
+                      onClick={() => copyToClipboard(pwd.password)}
+                      className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors duration-200"
+                      title="Copy password"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => pwd.id && handleDelete(pwd.id)}
+                      className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors duration-200"
+                      title="Delete password"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-                
-                <div className="flex space-x-1">
-                  <button
-                    onClick={() => copyToClipboard(pwd.password)}
-                    className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors duration-200"
-                    title="Copy password"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => handleDelete(pwd.id)}
-                    className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors duration-200"
-                    title="Delete password"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
+                <div className="mt-3 flex items-center">
+                  <div className="flex-1 font-mono text-sm bg-gradient-to-r from-gray-50 to-gray-100 px-4 py-2 rounded-lg border border-gray-200 select-all overflow-x-auto">
+                    {pwd.password}
+                  </div>
+                </div>
+                <div className="mt-2 flex justify-between text-xs text-gray-500">
+                  <span>{pwd.password.length} characters</span>
                 </div>
               </div>
-              <div className="mt-3 flex items-center">
-                <div className="flex-1 font-mono text-sm bg-gradient-to-r from-gray-50 to-gray-100 px-4 py-2 rounded-lg border border-gray-200 select-all overflow-x-auto">
-                  {pwd.password}
-                </div>
-              </div>
-              <div className="mt-2 flex justify-between text-xs text-gray-500">
-                <span>{pwd.password.length} characters</span>
-                <span>Security level: High</span>
-              </div>
-            </div>
-          ))}
+            ))}
         </div>
       )}
       

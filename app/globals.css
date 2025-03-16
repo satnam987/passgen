@@ -70,7 +70,7 @@ input, textarea, select, .faq-question, .accordion-title {
 }
 
 .animate-blob {
-  animation: blob 10s infinite alternate;
+  animation: blob 7s infinite;
 }
 
 .animation-delay-200 {
@@ -90,15 +90,15 @@ input, textarea, select, .faq-question, .accordion-title {
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.5s ease-in-out;
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
 @keyframes fadeIn {
-  0% {
+  from {
     opacity: 0;
     transform: translateY(10px);
   }
-  100% {
+  to {
     opacity: 1;
     transform: translateY(0);
   }
@@ -185,8 +185,7 @@ input:focus {
 
 /* Grid pattern for subtle backgrounds */
 .bg-grid-pattern {
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px);
   background-size: 20px 20px;
 }
 
@@ -287,4 +286,21 @@ input:focus {
   box-shadow: inherit !important;
 }
 
-/* Glassmorphism effects */ 
+/* Glassmorphism effects */
+.backdrop-blur-xl {
+  backdrop-filter: blur(20px);
+}
+
+/* Langzaam pulserend effect */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+} 

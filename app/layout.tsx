@@ -6,19 +6,25 @@ import { AuthProvider } from './context/AuthContext';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Unbreakapass',
-  description: 'Generate and securely store your passwords',
+  title: 'PassGen - Password Generator',
+  description: 'Genereer, beheer en bewaar wachtwoorden veilig',
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="en">
-      <body className="no-animations">
-        <AuthProvider>{children}</AuthProvider>
+    <html lang="nl">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
+      <body className={inter.className}>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

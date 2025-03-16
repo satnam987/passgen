@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { EventEmitter } from 'events';
+import SavePasswordForm from './SavePasswordForm';
 
 // Event emitter voor wachtwoordgeneratie events
 export const passwordEvents = new EventEmitter();
@@ -257,106 +258,100 @@ export default function PasswordGenerator({
   return (
     <div style={mainContainerStyles}>
       <div style={inputContainerStyles}>
-        <input
-          type="text"
-          readOnly
-          value={password}
-          placeholder="Generate a password..."
-          style={inputStyles}
+        <input 
+          type="text" 
+          value={password} 
+          readOnly 
+          style={inputStyles} 
+          placeholder="Your password will appear here"
         />
-        <button
-          onClick={handleCopy}
+        <button 
+          onClick={handleCopy} 
           style={buttonStyles}
-          title={copied ? "Copied!" : "Copy to clipboard"}
+          disabled={!password}
         >
-          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
-          </svg>
+          {copied ? 'Copied!' : 'Copy'}
         </button>
       </div>
       
       {password && (
         <div style={strengthMeterContainerStyles}>
           <div style={strengthLabelStyles}>
-            <span style={labelStyles}>Password Strength:</span>
-            <span style={{ fontWeight: "500", color: passwordStrength === 'Strong' ? "#4285f4" : passwordStrength === 'Good' ? "#fbbc05" : "#ea4335" }}>
-              {passwordStrength}
+            <span style={{ fontSize: '14px', color: '#374151', fontWeight: '500' }}>
+              Strength: <strong>{passwordStrength}</strong>
+            </span>
+            <span style={{ fontSize: '12px', color: '#6b7280' }}>
+              Crack time: {crackTime}
             </span>
           </div>
           <div style={strengthMeterStyles}>
-            <div style={getStrengthFillStyles()}></div>
-          </div>
-          <div style={{ fontSize: "14px", color: "#6b7280" }}>
-            Estimated time to crack: <span style={{ fontWeight: "500" }}>{crackTime}</span>
+            {password && <div style={getStrengthFillStyles()}></div>}
           </div>
         </div>
       )}
       
       <div style={sliderContainerStyles}>
         <label style={labelStyles}>
-          Password Length: {length}
+          Length: {length}
         </label>
-        <input
-          type="range"
-          min="8"
-          max="32"
+        <input 
+          type="range" 
+          min="4" 
+          max="32" 
           value={length}
-          onChange={(e) => setLength(Number(e.target.value))}
+          onChange={(e) => setLength(parseInt(e.target.value))}
           style={sliderStyles}
         />
       </div>
       
       <div style={checkboxesContainerStyles}>
         <label style={checkboxLabelStyles}>
-          <input
-            type="checkbox"
+          <input 
+            type="checkbox" 
             checked={useUppercase}
             onChange={(e) => setUseUppercase(e.target.checked)}
-            style={checkboxStyles}
+            style={{ marginRight: '8px' }}
           />
-          Uppercase (A-Z)
+          Uppercase
         </label>
-        
         <label style={checkboxLabelStyles}>
-          <input
-            type="checkbox"
+          <input 
+            type="checkbox" 
             checked={useLowercase}
             onChange={(e) => setUseLowercase(e.target.checked)}
-            style={checkboxStyles}
+            style={{ marginRight: '8px' }}
           />
-          Lowercase (a-z)
+          Lowercase
         </label>
-        
         <label style={checkboxLabelStyles}>
-          <input
-            type="checkbox"
+          <input 
+            type="checkbox" 
             checked={useNumbers}
             onChange={(e) => setUseNumbers(e.target.checked)}
-            style={checkboxStyles}
+            style={{ marginRight: '8px' }}
           />
-          Numbers (0-9)
+          Numbers
         </label>
-        
         <label style={checkboxLabelStyles}>
-          <input
-            type="checkbox"
+          <input 
+            type="checkbox" 
             checked={useSymbols}
             onChange={(e) => setUseSymbols(e.target.checked)}
-            style={checkboxStyles}
+            style={{ marginRight: '8px' }}
           />
-          Symbols (!@#$)
+          Symbols
         </label>
       </div>
       
-      <button
-        onClick={generatePassword}
+      <button 
+        onClick={generatePassword} 
         style={generateButtonStyles}
       >
-        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{marginRight: "8px"}}>
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-        </svg>
         Generate Password
       </button>
+      
+      {/* Voeg SavePasswordForm toe */}
+      {password && <SavePasswordForm generatedPassword={password} />}
     </div>
   );
 } 
