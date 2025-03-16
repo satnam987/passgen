@@ -29,12 +29,12 @@ export default function SavedPasswords() {
       setLoading(true);
       setError(null);
       
-      // Gebruik de passwordService in plaats van de API route
-      const passwordData = await getPasswordsByUserId(user.id);
-      console.log("Wachtwoorden opgehaald:", passwordData);
+      // Use the passwordService instead of the API route
+      const passwordData = await getPasswordsByUserId(user.uid);
+      console.log("Passwords retrieved:", passwordData);
       setPasswords(passwordData);
     } catch (err) {
-      setError('Er is een fout opgetreden bij het ophalen van wachtwoorden');
+      setError('An error occurred while retrieving passwords');
       console.error('Error fetching passwords:', err);
     } finally {
       setLoading(false);
@@ -53,26 +53,26 @@ export default function SavedPasswords() {
     setRefreshCount(prev => prev + 1);
   };
 
-  // Callback voor password events
+  // Callback for password events
   const handlePasswordEvent = () => {
-    console.log('Nieuw wachtwoord opgeslagen, gegevens worden ververst...');
+    console.log('New password saved, refreshing data...');
     handleRefresh();
   };
 
-  // Abonneren op password events
+  // Subscribe to password events
   useEffect(() => {
-    // Alleen abonneren als de gebruiker is ingelogd
+    // Only subscribe if the user is logged in
     if (!user) return;
     
-    // Abonneren op password events
+    // Subscribe to password events
     passwordEvents.on('passwordGenerated', handlePasswordEvent);
     
-    // Polling mechanisme om de 10 seconden verversen
+    // Polling mechanism to refresh every 10 seconds
     const interval = setInterval(() => {
       handleRefresh();
     }, 10000);
     
-    // Afmelden bij het opruimen van de component
+    // Unsubscribe when cleaning up the component
     return () => {
       passwordEvents.removeListener('passwordGenerated', handlePasswordEvent);
       clearInterval(interval);
@@ -83,17 +83,17 @@ export default function SavedPasswords() {
     if (!user) return;
     
     try {
-      // Optimistische update - verwijder wachtwoord meteen uit de UI
+      // Optimistic update - remove password immediately from the UI
       setPasswords(prevPasswords => prevPasswords.filter(pwd => pwd.id !== id));
       
-      // Gebruik de passwordService in plaats van de API route
+      // Use the passwordService instead of the API route
       await deletePassword(id);
       
-      // Verwijdering succesvol
+      // Deletion successful
     } catch (err) {
-      setError('Er is een fout opgetreden bij het verwijderen van het wachtwoord');
+      setError('An error occurred while deleting the password');
       console.error('Error deleting password:', err);
-      // Haal wachtwoorden opnieuw op om de juiste staat te herstellen
+      // Retrieve passwords again to restore the correct state
       handleRefresh();
     }
   };
@@ -111,7 +111,7 @@ export default function SavedPasswords() {
   if (!user) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-600">Log in om je opgeslagen wachtwoorden te bekijken</p>
+        <p className="text-gray-600">Log in to view your saved passwords</p>
       </div>
     );
   }
@@ -184,7 +184,7 @@ export default function SavedPasswords() {
       ) : (
         <div className="space-y-4">
           {passwords
-            .filter(pwd => pwd.id !== undefined) // Filter wachtwoorden zonder id
+            .filter(pwd => pwd.id !== undefined) // Filter passwords without id
             .map((pwd) => (
               <div
                 key={pwd.id}
