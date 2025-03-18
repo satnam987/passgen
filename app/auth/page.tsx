@@ -34,7 +34,7 @@ export default function AuthPage() {
     setError('');
     
     if (!isLogin && password !== confirmPassword) {
-      setError('Wachtwoorden komen niet overeen. Probeer opnieuw.');
+      setError('Passwords do not match. Please try again.');
       return;
     }
     
@@ -53,17 +53,17 @@ export default function AuthPage() {
       console.error('Auth error:', err);
       // Error handling
       if (err.code === 'auth/invalid-credential') {
-        setError('Ongeldige email of wachtwoord');
+        setError('Invalid email or password');
       } else if (err.code === 'auth/user-not-found') {
-        setError('Gebruiker niet gevonden');
+        setError('User not found');
       } else if (err.code === 'auth/wrong-password') {
-        setError('Onjuist wachtwoord');
+        setError('Incorrect password');
       } else if (err.code === 'auth/email-already-in-use') {
-        setError('Dit e-mailadres is al in gebruik');
+        setError('This email is already in use');
       } else if (err.code === 'auth/weak-password') {
-        setError('Wachtwoord is te zwak');
+        setError('Password is too weak');
       } else {
-        setError(err.message || 'Er is een fout opgetreden');
+        setError(err.message || 'An error occurred');
       }
     } finally {
       setIsLoading(false);
@@ -98,12 +98,12 @@ export default function AuthPage() {
       <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2 text-blue-600">
-            {isLogin ? 'Welkom terug' : 'Account aanmaken'}
+            {isLogin ? 'Welcome back' : 'Create Account'}
           </h1>
           <p className="text-gray-600">
             {isLogin 
-              ? 'Log in om je wachtwoorden veilig te beheren' 
-              : 'Registreer om je wachtwoorden op te slaan'}
+              ? 'Log in to manage your passwords securely' 
+              : 'Register to save your passwords'}
           </p>
         </div>
 
@@ -116,7 +116,7 @@ export default function AuthPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              E-mailadres
+              Email address
             </label>
             <div className="relative">
               <input
@@ -125,7 +125,7 @@ export default function AuthPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="jouw.email@voorbeeld.com"
+                placeholder="your.email@example.com"
                 required
               />
             </div>
@@ -133,7 +133,7 @@ export default function AuthPage() {
 
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Wachtwoord
+              Password
             </label>
             <div className="relative">
               <input
@@ -142,7 +142,7 @@ export default function AuthPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full pr-12 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder={isLogin ? "Voer je wachtwoord in" : "Maak een sterk wachtwoord"}
+                placeholder={isLogin ? "Enter your password" : "Create a strong password"}
                 required
               />
               <button 
@@ -150,7 +150,7 @@ export default function AuthPage() {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-500"
               >
-                {showPassword ? "Verbergen" : "Tonen"}
+                {showPassword ? "Hide" : "Show"}
               </button>
             </div>
           </div>
@@ -158,7 +158,7 @@ export default function AuthPage() {
           {!isLogin && (
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                Bevestig wachtwoord
+                Confirm password
               </label>
               <div className="relative">
                 <input
@@ -171,7 +171,7 @@ export default function AuthPage() {
                       ? 'border-red-300 bg-red-50' 
                       : 'border-gray-300'
                   }`}
-                  placeholder="Voer je wachtwoord opnieuw in"
+                  placeholder="Enter your password again"
                   required
                 />
                 <button 
@@ -179,12 +179,12 @@ export default function AuthPage() {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-500"
                 >
-                  {showConfirmPassword ? "Verbergen" : "Tonen"}
+                  {showConfirmPassword ? "Hide" : "Show"}
                 </button>
               </div>
               {confirmPassword && password !== confirmPassword && (
                 <p className="mt-1 text-xs text-red-600">
-                  Wachtwoorden komen niet overeen
+                  Passwords do not match
                 </p>
               )}
             </div>
@@ -199,11 +199,11 @@ export default function AuthPage() {
               }`}
             >
               {isLoading ? (
-                'Bezig...'
+                'Processing...'
               ) : isLogin ? (
-                'Inloggen'
+                'Login'
               ) : (
-                'Registreren'
+                'Register'
               )}
             </button>
           </div>
@@ -215,13 +215,13 @@ export default function AuthPage() {
             onClick={switchMode} 
             className="text-blue-600 hover:text-blue-500 font-medium"
           >
-            {isLogin ? 'Nog geen account? Registreer hier' : 'Al een account? Log in'}
+            {isLogin ? 'No account yet? Register here' : 'Already have an account? Log in'}
           </button>
         </div>
 
         <div className="mt-4 text-center">
           <Link href="/" className="text-sm text-gray-600 hover:text-blue-500">
-            Terug naar homepage
+            Back to homepage
           </Link>
         </div>
       </div>
